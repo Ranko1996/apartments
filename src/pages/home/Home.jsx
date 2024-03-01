@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import './Home.css'; // Uvoz CSS-a
+import './Home.css'; 
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [apartments, setApartments] = useState([]);
+
+  const handleClick = (apartment) => {
+    
+    navigate(`/apartment/${apartment.id}`, { state: { apartment } });
+    // navigate('/apartment', { state: { apartment } });
+  };
 
   useEffect(() => {
     const fetchApartments = async () => {
@@ -25,7 +33,8 @@ const Home = () => {
     <div className="apartment-container">
       {apartments.length > 0 ? (
         apartments.map((apartment, index) => (
-          <div key={index} className="apartment-card">
+          // <div key={index} className="apartment-card" onClick={() => navigate(`/apartment/${apartment.id}`)}>
+          <div key={index} className="apartment-card" onClick={() => handleClick(apartment)}>
             <img src={apartment.image} alt={apartment.title} className="apartment-image" />
             <div className="apartment-info">
               <h3>{apartment.title}</h3>
