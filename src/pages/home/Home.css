@@ -8,12 +8,10 @@
   
   .apartment-card {
     width: calc(100% - 40px);
-    max-width: 400px;
-    border: 1px solid #ddd;
+    
+    max-width: 350px;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px
-    4px rgba(0,0,0,0.1);
     transition: box-shadow 0.3s ease-in-out;
     }
     
@@ -74,6 +72,27 @@ margin: 5px 0;
 font-size: 16px;
 color: #666;
 }
+/* Stilovi za date inpute i input broja osoba */
+.date-filter input[type="date"],
+.date-filter input[type="number"] {
+  background-color: #ffffff; /* Svjetlija pozadina za bolju vidljivost */
+  border: 2px solid #cccccc; /* Suptilnija granica */
+  border-radius: 8px; /* Zaobljeni uglovi za moderniji izgled */
+  padding: 8px 12px; /* Unutarnji razmak za bolju čitljivost */
+  font-size: 16px; /* Povećana veličina fonta za bolju vidljivost */
+  outline: none; /* Uklanja outline koji se pojavljuje pri fokusu */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Blaga sjena za dubinu */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Glatki prijelaz za interaktivnost */
+}
+
+.date-filter input[type="date"]:hover,
+.date-filter input[type="number"]:hover,
+.date-filter input[type="date"]:focus,
+.date-filter input[type="number"]:focus {
+  border-color: #007bff; /* Promjena boje granice pri hoveru ili fokusu */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Povećana sjena za efekt "podizanja" */
+}
+
 
 @media (max-width: 768px) {
 .apartment-card {

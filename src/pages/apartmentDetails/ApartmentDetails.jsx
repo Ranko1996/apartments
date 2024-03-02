@@ -1,14 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import './ApartmentDetails.css'; // Osigurajte da je ovaj put ispravan
+import './ApartmentDetails.css'; 
+import ReservationModal from '../../components/confirmationModal/ConfirmationModal';
 
 const ApartmentDetails = () => {
     const location = useLocation();
-    const { apartment } = location.state || {};
+    const { apartment, startDate, endDate } = location.state || {};
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const calculateTotalPrice = () => {
+        if (!apartment || !startDate || !endDate) {
+            return 'N/A';
+        }
+    
+        let totalPrice = 0;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+    
+        apartment.pricelistInEuros.forEach((price) => {
+            const priceStart = new Date(price.intervalStart);
+            const priceEnd = new Date(price.intervalEnd);
+    
+            if (start < priceEnd && end > priceStart) {
+                const effectiveStart = start > priceStart ? start : priceStart;
+                const effectiveEnd = end < priceEnd ? end : priceEnd;
+                const diffTime = effectiveEnd - effectiveStart;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                totalPrice += diffDays * price.pricePerNight;
+            }
+        });
+    
+        return totalPrice.toFixed(2);
+    };
+    
+
+    const handleReservation = () => {
+        setIsModalOpen(true);
     };
 
     return (
@@ -20,50 +52,59 @@ const ApartmentDetails = () => {
                     <p>Capacity: {apartment.capacity} people</p>
                     <p>Distance to beach: {apartment.beachDistanceInMeters} meters</p>
                     <div className="amenities">
-                    {apartment.amenities == null ?<h3></h3>:<h3>Pogodnosti:</h3>}
+                        <h3>Amenities:</h3>
                         <ul>
-                            {apartment.amenities.airConditioning && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/1530/1530297.png" alt="Air Conditioning"/><p>Air Conditioning</p></li>
-                            )}
-                            {apartment.amenities.parkingSpace && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/10815/10815101.png" alt="Parking Space"/><p>Parking Space</p></li>
-                            )}
-                            {apartment.amenities.pets && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/1076/1076877.png" alt="Pets Allowed"/><p>Pets Allowed</p></li>
-                            )}
-                            {apartment.amenities.pool && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/2581/2581223.png" alt="Pool"/><p>Pool</p></li>
-                            )}
-                            {apartment.amenities.wifi && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/1/1848.png" alt="WiFi"/><p>WiFi</p></li>
-                            )}
-                            {apartment.amenities.tv && (
-                                <li><img src="https://cdn-icons-png.flaticon.com/128/2502/2502208.png" alt="TV"/><p>TV</p></li>
-                            )}
+                            {apartment.amenities.airConditioning && <li>Air Conditioning</li>}
+                            {apartment.amenities.parkingSpace && <li>Parking Space</li>}
+                            {apartment.amenities.pets && <li>Pets Allowed</li>}
+                            {apartment.amenities.pool && <li>Pool</li>}
+                            {apartment.amenities.wifi && <li>WiFi</li>}
+                            {apartment.amenities.tv && <li>TV</li>}
                         </ul>
                     </div>
                     <div className="price-list">
                         <h3>Price List:</h3>
                         {apartment.pricelistInEuros.map((price, index) => (
-                            <p key={index}>
-                                {formatDate(price.intervalStart)} - {formatDate(price.intervalEnd)}: {price.pricePerNight}€ per night
-                            </p>
+                            <p key={index}>{formatDate(price.intervalStart)} - {formatDate(price.intervalEnd)}: {price.pricePerNight}€ per night</p>
                         ))}
                     </div>
                     <div className="availability">
                         <h3>Available Dates:</h3>
                         {apartment.availableDates.map((date, index) => (
-                            <p key={index}>
-                                {formatDate(date.intervalStart)} - {formatDate(date.intervalEnd)}
-                            </p>
+                            <p key={index}>{formatDate(date.intervalStart)} - {formatDate(date.intervalEnd)}</p>
                         ))}
                     </div>
+                    <div className="total-price">
+                        {startDate && endDate ? (
+                            <>
+                                <h3>Total Price:</h3>
+                                <p>{calculateTotalPrice()} €</p>
+                                <button onClick={handleReservation}>Rezerviraj</button>
+                            </>
+                        ) : (
+                            <>
+                                <h3>Price Range:</h3>
+                                <p>Please select stay dates to see the exact price and book the apartment.</p>
+                            </>
+                        )}
+                    </div>
+                    <ReservationModal 
+                        isOpen={isModalOpen} 
+                        details={{
+                            apartmentName: apartment.title,
+                            startDate: formatDate(startDate),
+                            endDate: formatDate(endDate),
+                            capacity: apartment.capacity,
+                            totalPrice: calculateTotalPrice()
+                        }} 
+                        onClose={() => setIsModalOpen(false)} 
+                    />
                 </>
             ) : (
                 <p>No apartment details available.</p>
             )}
         </div>
     );
-}
+};
 
 export default ApartmentDetails;
