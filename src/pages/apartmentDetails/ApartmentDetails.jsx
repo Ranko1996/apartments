@@ -10,7 +10,7 @@ const ApartmentDetails = () => {
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString('hr-HR', options);
     };
 
     const calculateTotalPrice = () => {
@@ -37,7 +37,6 @@ const ApartmentDetails = () => {
     
         return totalPrice.toFixed(2);
     };
-    
 
     const handleReservation = () => {
         setIsModalOpen(true);
@@ -49,42 +48,52 @@ const ApartmentDetails = () => {
                 <>
                     <h2>{apartment.title}</h2>
                     <img src={apartment.image} alt={apartment.title} className="apartment-image" />
-                    <p>Capacity: {apartment.capacity} people</p>
-                    <p>Distance to beach: {apartment.beachDistanceInMeters} meters</p>
+                    <p>Kapacitet: {apartment.capacity} osoba</p>
+                    <p>Udaljenost do plaže: {apartment.beachDistanceInMeters} metara</p>
                     <div className="amenities">
-                        <h3>Amenities:</h3>
+                        <h3>Pogodnosti:</h3>
                         <ul>
-                            {apartment.amenities.airConditioning && <li>Air Conditioning</li>}
-                            {apartment.amenities.parkingSpace && <li>Parking Space</li>}
-                            {apartment.amenities.pets && <li>Pets Allowed</li>}
-                            {apartment.amenities.pool && <li>Pool</li>}
-                            {apartment.amenities.wifi && <li>WiFi</li>}
+                            {apartment.amenities.airConditioning && <li>Klima uređaj</li>}
+                            {apartment.amenities.parkingSpace && <li>Parking mjesto</li>}
+                            {apartment.amenities.pets && <li>Dozvoljeni ljubimci</li>}
+                            {apartment.amenities.pool && <li>Bazen</li>}
+                            {apartment.amenities.wifi && <li>Wi-Fi</li>}
                             {apartment.amenities.tv && <li>TV</li>}
                         </ul>
                     </div>
                     <div className="price-list">
-                        <h3>Price List:</h3>
+                    <h3>Cjenik:</h3>
+                    <div className="cards-container">
                         {apartment.pricelistInEuros.map((price, index) => (
-                            <p key={index}>{formatDate(price.intervalStart)} - {formatDate(price.intervalEnd)}: {price.pricePerNight}€ per night</p>
+                            <div className="card" key={index}>
+                                <p>{formatDate(price.intervalStart)} - {formatDate(price.intervalEnd)}:</p>
+                                <p><strong>{price.pricePerNight}€ po noći</strong></p>
+                            </div>
                         ))}
+                    </div>
                     </div>
                     <div className="availability">
-                        <h3>Available Dates:</h3>
-                        {apartment.availableDates.map((date, index) => (
-                            <p key={index}>{formatDate(date.intervalStart)} - {formatDate(date.intervalEnd)}</p>
-                        ))}
+                        <h3>Dostupni datumi:</h3>
+                        <div className="cards-container">
+                            {apartment.availableDates.map((date, index) => (
+                                <div className="card" key={index}>
+                                    <p>{formatDate(date.intervalStart)} - {formatDate(date.intervalEnd)}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+
                     <div className="total-price">
                         {startDate && endDate ? (
                             <>
-                                <h3>Total Price:</h3>
+                                <h3>Ukupna cijena:</h3>
                                 <p>{calculateTotalPrice()} €</p>
                                 <button onClick={handleReservation}>Rezerviraj</button>
                             </>
                         ) : (
                             <>
-                                <h3>Price Range:</h3>
-                                <p>Please select stay dates to see the exact price and book the apartment.</p>
+                                <h3>Raspon cijena:</h3>
+                                <p>Molimo odaberite datume boravka kako biste vidjeli točnu cijenu i rezervirali smještaj.</p>
                             </>
                         )}
                     </div>
@@ -101,7 +110,7 @@ const ApartmentDetails = () => {
                     />
                 </>
             ) : (
-                <p>No apartment details available.</p>
+                <p>Detalji o smještaju nisu dostupni.</p>
             )}
         </div>
     );

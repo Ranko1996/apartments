@@ -46,15 +46,13 @@ const Home = () => {
     }
   }, [startDate]);
 
-  // const handleClick = (apartment) => {
-  //   navigate(`/apartment/${apartment.id}`, { state: { apartment } });
-  // };
+  
   const handleClick = (apartment) => {
     navigate(`/apartment/${apartment.id}`, {
       state: {
         apartment: apartment,
-        startDate: startDate, // Prosljeđivanje odabranog početnog datuma
-        endDate: endDate // Prosljeđivanje odabranog završnog datuma
+        startDate: startDate, 
+        endDate: endDate
       }
     });
   };
@@ -84,10 +82,10 @@ const Home = () => {
   
 
   const resetFilters = () => {
-    setApartments(originalApartments); // Vraća na originalni popis apartmana
+    setApartments(originalApartments);
     setStartDate('');
     setEndDate('');
-    setCapacity(''); // Resetira odabrani kapacitet
+    setCapacity(''); 
   };
 
   return (
